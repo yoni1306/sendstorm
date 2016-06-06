@@ -1,17 +1,12 @@
 {
   "name": "sendstorm",
-  "version": "0.0.1",
-  "description": "sendstorm API",
+  "version": "1.0.0",
   "main": "server.js",
   "dependencies": {
-    "express": "~4.13.4",
-    "mysql": "~2.10.2"
-  },
-  "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "forever start server.js"
-  },
-  "author": "",
-  "license": "commercial"
+    "express": "~4.0.0",
+    "body-parser": "~1.0.1",
+    "validator": "*",
+    "mysql": "*",
+    "util": "*"
+  }
 }

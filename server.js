@@ -1,11 +1,15 @@
 var express = require('express');
+var bodyparser = require('body-parser');
+var connection = require('./connection');
+var routes = require('./routes');
+
 var app = express();
+app.use(bodyparser.urlencoded({extended: true}));
+app.use(bodyparser.json());
 
-app.get('/ping', function (req, res) {
-  res.send('pong');
+connection.init();
+routes.configure(app);
+
+var server = app.listen(3000, function() {
+    console.log('Server listening on port ' + server.address().port);
 });
-
-app.listen(3000, function () {
-  console.log('app listening on port 3000!');
-});
-
