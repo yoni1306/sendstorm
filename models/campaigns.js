@@ -7,6 +7,9 @@ function Campaigns() {
 
     function attachContacts(con, campaigns, callback) {
         pending = campaigns.length;
+        if (pending == 0) {
+            callback([]);
+        }
         campaigns.forEach(function(campaign, k) {
             con.query("SELECT contacts.* FROM contacts INNER JOIN operational_contacts ON operational_contacts.campaign_id = ? AND contacts.contact_id = operational_contacts.contact_id", [campaign.campaign_id], function(err, result) {
                 campaigns[k].contacts = result;
@@ -83,6 +86,11 @@ function Campaigns() {
                     $this.getOne(campaignId, res);
                     con.release();
                 };
+
+                if (pending == 0) {
+                    $this.getOne(campaignId, res);
+                    return;
+                }
 
                 if (Array.isArray(data.contactIDs)) {
                     data.contactIDs.forEach(function(id) {
