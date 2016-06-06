@@ -112,7 +112,7 @@ function Campaigns() {
                             "phone_code": contact.phoneNumber.toString().replace(/[^\d]/, "").substr(0,3),
                         };
 
-                        if (validator.isInt(contact.id))
+                        if ((typeof contact.id != "undefined") && validator.isInt(contact.id.toString()))
                             contactData.id = contact.id;
 
                         con.query("INSERT INTO contacts SET ?", contactData, function(err, result) {
