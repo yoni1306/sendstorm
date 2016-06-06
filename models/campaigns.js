@@ -70,13 +70,15 @@ function Campaigns() {
         }
 
         connection.acquire(function(err, con) {
-            con.query('INSERT INTO campaigns set ?', {"name": data.name, "launch_url": data.launchUrl} , function(err, result) {
-                var campaignId = result.insertId;
+            con.query('INSERT INTO campaigns set ?', {"name": data.name, "launch_url": data.launchUrl, "account_id": 1} , function(err, result) {
                 if (err) {
+                    console.log("MySQL error", err);
                     res.send({message: 'Campaign creation failed'}, 400);
                     con.release();
                     return;
                 }
+
+                var campaignId = result.insertId;
 
                 var pending = 0;
                 if (Array.isArray(data.contactIDs)) pending += data.contactIDs.length;
