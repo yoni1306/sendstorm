@@ -1,4 +1,5 @@
 var campaigns = require('./models/campaigns');
+var contacts = require('./models/contacts');
 
 module.exports = {
     configure: function(app) {
@@ -19,6 +20,17 @@ module.exports = {
 
         app.delete('/api/campaigns/:id/', function(req, res) {
             campaigns.delete(req.params.id, res);
+        });
+
+        app.get('/api/contacts/', function(req, res) {
+            contacts.get(res);
+        });
+
+        app.get('/api/contacts/:id/', function(req, res) {
+            contacts.getOne(req.params.id, res);
+        });
+        app.post('/api/contacts/', function(req, res) {
+            contacts.create(req.body, res);
         });
     }
 };
