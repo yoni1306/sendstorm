@@ -1,10 +1,10 @@
 module.exports = {
-    mq: "amqp://guest:guest@localhost:5672",
+    mq: "amqp://sendstorm:Yia1ujai@localhost:5672",
     db: {
         connectionLimit: 10,
         host: 'localhost',
         user: 'root',
-        password: '',
+        password: 'mysqlroot',
         database: 'sendstorm'
     }
 };
