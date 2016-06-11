@@ -37,7 +37,7 @@ function QueueTask() {
                         var ids = queues[queue];
                         if (!ids.length)
                             return;
-                        var msg = JSON.stringify({"backgroundTask": true, "contactIDs": ids});
+                        var msg = JSON.stringify({"backgroundTask": false, "contactIDs": ids});
                         console.log("Sending", msg);
                         ch.assertQueue(queue, {durable: true});
                         ch.sendToQueue(queue, new Buffer(msg), {persistent: true});
