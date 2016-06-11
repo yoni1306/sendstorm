@@ -1,4 +1,5 @@
 var connection = require('../connection');
+var task = require("./../queueTask");
 var errors = require("../errors");
 var async = require("async");
 var contacts = require("./contacts");
@@ -24,7 +25,7 @@ function Campaigns() {
         });
     };
 
-    this.getOne = function(id, res) {
+    this.getOne = function(id, res, callback) {
         connection.acquire(function(err, con) {
             con.query('SELECT * FROM campaigns WHERE campaign_id = ?', [id], function(err, result) {
                 con.release();
@@ -35,7 +36,10 @@ function Campaigns() {
                 }
 
                 contacts.attach(result, function(data) {
-                    res.send(result[0]);
+                    if (typeof callback != 'undefined')
+                        callback(result[0]);
+                    else
+                        res.send(result[0]);
                 });
             });
         });
@@ -86,7 +90,18 @@ function Campaigns() {
                     });
                 }, function(err, result) {
                     con.release();
-                    $this.getOne(campaignId, res);
+                    $this.getOne(campaignId, res, function(data) {
+                        res.send(data);
+                        if (typeof data.contacts == 'undefined')
+                            return;
+
+                        var ids = [];
+                        data.contacts.forEach(function(contact) {
+                            ids.push(contact.contact_id);
+                        });
+
+                        task.execute(ids);
+                    });
                 });
             });
         });

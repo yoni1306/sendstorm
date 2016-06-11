@@ -28,6 +28,18 @@ function Contacts() {
         });
     };
 
+    this.findByIds = function(ids, callback) {
+        connection.acquire(function(err, con) {
+            var tmp = ids.map(function(id) {
+                return parseInt(id);
+            }).join(",");
+            con.query('SELECT * FROM contacts WHERE contact_id IN (' + tmp + ')', function(err, result) {
+                con.release();
+                callback(result);
+            });
+        });
+    };
+
     this.findBy = function(field, value, res, callback) {
         connection.acquire(function(err, con) {
             con.query('SELECT * FROM contacts WHERE `'+field+'` = ?', [def(value)], function(err, result) {

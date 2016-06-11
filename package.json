@@ -12,6 +12,7 @@
     "validator": "*",
     "mysql": "*",
     "util": "*",
-    "async": "*"
+    "async": "*",
+    "amqplib": "*"
   }
 }

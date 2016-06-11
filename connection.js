@@ -1,16 +1,11 @@
 var mysql = require('mysql');
+var config = require('./config');
 
 function Connection() {
     this.pool = null;
 
     this.init = function() {
-        this.pool = mysql.createPool({
-            connectionLimit: 10,
-            host: 'localhost',
-            user: 'root',
-            password: 'mysqlroot',
-            database: 'sendstorm'
-        });
+        this.pool = mysql.createPool(config.db);
     };
 
     this.acquire = function(callback) {
