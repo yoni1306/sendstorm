@@ -47,9 +47,11 @@ function Campaigns() {
 
     this.delete = function(id, res, callback) {
         connection.acquire(function(err, con) {
-            con.query('DELETE * FROM campaigns WHERE campaign_id = ?', [id], function(err, result) {
-                con.release();
-                res.send('{"status":"ok"}');
+            con.query('DELETE FROM campaigns WHERE campaign_id = ?', [id], function(err, result) {
+                con.query('DELETE FROM operational_contacts WHERE campaign_id = ?', [id], function(err, result) {
+                    con.release();
+                    res.send('{"status":"ok"}');
+                });
             });
         });
     };
