@@ -45,6 +45,15 @@ function Campaigns() {
         });
     };
 
+    this.delete = function(id, res, callback) {
+        connection.acquire(function(err, con) {
+            con.query('DELETE * FROM campaigns WHERE campaign_id = ?', [id], function(err, result) {
+                con.release();
+                res.send('{"status":"ok"}');
+            });
+        });
+    };
+
     this.create = function(data, res) {
 
         errors
