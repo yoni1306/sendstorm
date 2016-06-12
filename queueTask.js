@@ -19,7 +19,7 @@ function QueueTask() {
                 return;
             }
 
-            amqp.connect(config.mqConnectionString, function(err, conn) {
+            amqp.connect(config.mq, function(err, conn) {
                 conn.createChannel(function(err, ch) {
                     var queues = {"resolveContact": [], "trackContact": []};
                     data.forEach(function(contact) {
