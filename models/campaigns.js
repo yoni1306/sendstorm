@@ -47,15 +47,15 @@ function Campaigns() {
 
     this.delete = function(id, res, callback) {
         connection.acquire(function(err, con) {
-            con.query('DELETE FROM campaigns WHERE campaign_id = ?', [id], function(err, result) {
-                if (result.changedRows == 0) {
-                    res.send("No such campaign found", 500);
-                    return;
-                }
-
-                con.query('DELETE FROM operational_contacts WHERE campaign_id = ?', [id], function(err, result) {
+	    con.query('DELETE FROM operational_contacts WHERE campaign_id = ?', [id], function(err, result) {
+            	con.query('DELETE FROM campaigns WHERE campaign_id = ?', [id], function(err, result) {
                     con.release();
-                    res.send('{"status":"ok"}');
+	            if (typeof result == "undefined" || result.affectedRows == 0) {
+        	    	res.send("No such campaign found", 500);
+                	return;
+	            } else {
+                    	res.send('{"status":"ok"}');
+		    }
                 });
             });
         });
