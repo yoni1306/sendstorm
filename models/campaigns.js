@@ -65,8 +65,8 @@ function Campaigns() {
 
         errors
             .clean()
-            .isEmpty("name", data.name, "Invalid name")
-            .isURL("launchUrl", data.launchUrl, "Invalid launch URL");
+            .isEmpty("name", data.name, "Invalid name");
+            //.isURL("launchUrl", data.launchUrl, "Invalid launch URL");
 
         if (!Array.isArray(data.contacts))
             data.contacts = [];
@@ -83,7 +83,7 @@ function Campaigns() {
         }
 
         connection.acquire(function(err, con) {
-            con.query('INSERT INTO campaigns set ?', {"name": data.name, "launch_url": data.launchUrl, "account_id": 1} , function(err, result) {
+            con.query('INSERT INTO campaigns set ?', {"name": data.name, "account_id": 1} , function(err, result) {
                 if (err) {
                     res.send({message: 'Campaign creation failed'}, 400);
                     con.release();
