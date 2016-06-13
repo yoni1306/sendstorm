@@ -44,6 +44,7 @@ function QueueTask() {
                     });
                     if (callback)
                         callback(true);
+                    conn.close();
                 });
             });
         });
