@@ -44,7 +44,7 @@ function QueueTask() {
                     });
                     if (callback)
                         callback(true);
-                    conn.close();
+		    setTimeout(function() { conn.close(); }, 5000);
                 });
             });
         });
