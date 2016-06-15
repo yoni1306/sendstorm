@@ -73,7 +73,7 @@ function Campaigns() {
 
         if (Array.isArray(data.contactIDs))
             data.contactIDs.forEach(function(id) {
-                data.contacts.push({"id": id});
+                data.contacts.push({"contact_id": id});
             });
         delete data.contactIDs;
 
