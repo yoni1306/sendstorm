@@ -93,7 +93,7 @@ function OperationalContacts() {
         });
     };
 
-    this.assignContactsForChannel = function(channelID, contactIDs) {
+    this.assignContactsToChannel = function(channelID, contactIDs) {
         connection.acquire(function(err, con) {
             channels.updateUsedContactsAmount(channelID, contactIDs.length);
 
