@@ -20,14 +20,14 @@ function QueueManager() {
             if (contactIDs && contactIDs.length) {
                 contactIDs = _.pluck(contactIDs, 'contact_id');
 
-                channels.findAvailableChannelsForOperation(config.OPERATION_TYPE.RESOLVING, function(err, channels) {
+                channels.findAvailableChannelsForOperation(config.OPERATION_TYPE.RESOLVING, function(err, availableChannels) {
                     if (err) {
                         errors.add('findAvailableChannelsForResolving - Error', err);
                         return;
                     }
 
-                    if (channels && channels.length) {
-                        assignContactsToChannelsForOperation(channels, contactIDs, config.OPERATION_TYPE.RESOLVING);
+                    if (availableChannels && availableChannels.length) {
+                        assignContactsToChannelsForOperation(availableChannels, contactIDs, config.OPERATION_TYPE.RESOLVING);
                     } else {
                         channels.assignNewChannelForOperation(config.OPERATION_TYPE.RESOLVING, function(err, channel) {
                             if (err) {
@@ -57,14 +57,14 @@ function QueueManager() {
                 }
 
                 if (contactIDs && contactIDs.length) {
-                    channels.findAvailableChannelsForOperation(config.OPERATION_TYPE.TRACKING, function(err, channels) {
+                    channels.findAvailableChannelsForOperation(config.OPERATION_TYPE.TRACKING, function(err, availableChannels) {
                         if (err) {
                             errors.add('findAvailableChannelsForResolving - Error', err);
                             return;
                         }
 
-                        if (channels && channels.length) {
-                            assignContactsToChannelsForOperation(channels, contactIDs, config.OPERATION_TYPE.TRACKING);
+                        if (availableChannels && availableChannels.length) {
+                            assignContactsToChannelsForOperation(availableChannels, contactIDs, config.OPERATION_TYPE.TRACKING);
                         } else {
                             channels.assignNewChannelForOperation(config.OPERATION_TYPE.TRACKING, function(err, channel) {
                                 if (err) {
