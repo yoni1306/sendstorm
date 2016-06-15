@@ -18,6 +18,8 @@ function QueueManager() {
             }
 
             if (contactIDs && contactIDs.length) {
+                contactIDs = _.pluck(contactIDs, 'contact_id');
+
                 channels.findAvailableChannelsForOperation(config.OPERATION_TYPE.RESOLVING, function(err, channels) {
                     if (err) {
                         errors.add('findAvailableChannelsForResolving - Error', err);

@@ -71,7 +71,7 @@ function Channels() {
         }
 
         connection.acquire(function(err, con) {
-            con.query('SELECT id, used_contacts_amount FROM channels WHERE valid = TRUE AND operation_type = ? AND used_contacts_amount < ?', [operationType, config.OPERATION_MAX_LIMIT[operationType]], function(err, result) {
+            con.query('SELECT channel_id, used_contacts_amount FROM channels WHERE valid = TRUE AND operation_type = ? AND used_contacts_amount < ?', [operationType, config.OPERATION_MAX_LIMIT[operationType]], function(err, result) {
                 con.release();
 
                 callback(err, result);
