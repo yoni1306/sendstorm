@@ -8,9 +8,9 @@ function Campaigns() {
 
     var $this = this;
 
-    this.get = function(res) {
+    $this.get = function(res) {
         var $this = this;
-        
+
         connection.acquire(function(err, con) {
             con.query('SELECT * FROM campaigns', function(err, result) {
                 con.release();
@@ -27,7 +27,7 @@ function Campaigns() {
         });
     };
 
-    this.getOne = function(id, res, callback) {
+    $this.getOne = function(id, res, callback) {
         var $this = this;
 
         connection.acquire(function(err, con) {
@@ -49,7 +49,7 @@ function Campaigns() {
         });
     };
 
-    this.delete = function(id, res, callback) {
+    $this.delete = function(id, res, callback) {
         var $this = this;
 
         connection.acquire(function(err, con) {
@@ -67,7 +67,7 @@ function Campaigns() {
         });
     };
 
-    this.create = function(data, res) {
+    $this.create = function(data, res) {
         var $this = this;
 
         errors

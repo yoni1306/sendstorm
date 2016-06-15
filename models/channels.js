@@ -12,7 +12,7 @@ function Channels() {
         return value.toString();
     }
 
-    this.findByIds = function(ids, callback) {
+    $this.findByIds = function(ids, callback) {
         var $this = this;
 
         connection.acquire(function(err, con) {
@@ -26,7 +26,7 @@ function Channels() {
         });
     };
 
-    this.findBy = function(field, value, res, callback) {
+    $this.findBy = function(field, value, res, callback) {
         var $this = this;
 
         connection.acquire(function(err, con) {
@@ -41,7 +41,7 @@ function Channels() {
 
     };
 
-    this.getOne = function(id, res, callback) {
+    $this.getOne = function(id, res, callback) {
         var $this = this;
 
         $this.findBy("channel_id", id, res, function(err, result) {
@@ -56,7 +56,7 @@ function Channels() {
         });
     };
 
-    this.get = function(res, callback) {
+    $this.get = function(res, callback) {
         var $this = this;
 
         connection.acquire(function(err, con) {
@@ -72,7 +72,7 @@ function Channels() {
         });
     };
 
-    this.findAvailableChannelsForOperation = function(operationType, callback) {
+    $this.findAvailableChannelsForOperation = function(operationType, callback) {
         var $this = this;
 
         if (!operationType) {
@@ -89,7 +89,7 @@ function Channels() {
         });
     };
 
-    this.updateUsedContactsAmount = function(channelID, addedAmount) {
+    $this.updateUsedContactsAmount = function(channelID, addedAmount) {
         var $this = this;
 
         connection.acquire(function(err, con) {
@@ -100,9 +100,9 @@ function Channels() {
         });
     };
 
-    this.assignNewChannelForOperation = function(operationType, callback) {
+    $this.assignNewChannelForOperation = function(operationType, callback) {
         var $this = this;
-        
+
         if (!operationType) {
             callback('Operation type is missing', null);
             return;

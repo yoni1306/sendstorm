@@ -12,7 +12,7 @@ function Contacts() {
         return value.toString();
     }
 
-    this.attach = function(campaigns, callback) {
+    $this.attach = function(campaigns, callback) {
         var $this = this;
 
         connection.acquire(function(err, con) {
@@ -30,7 +30,7 @@ function Contacts() {
         });
     };
 
-    this.findByIds = function(ids, callback) {
+    $this.findByIds = function(ids, callback) {
         var $this = this;
 
         connection.acquire(function(err, con) {
@@ -44,7 +44,7 @@ function Contacts() {
         });
     };
 
-    this.findBy = function(field, value, res, callback) {
+    $this.findBy = function(field, value, res, callback) {
         var $this = this;
 
         connection.acquire(function(err, con) {
@@ -59,16 +59,16 @@ function Contacts() {
 
     };
 
-    this.findByPhone = function(phone, res, callback) {
+    $this.findByPhone = function(phone, res, callback) {
         var $this = this;
 
         $this.findBy("phone_number", def(phone).replace(/[^\d]/g, ""), res, callback);
     };
 
-    this.create = function(data, res, callback) {
-        var create = function(data) {
-            var $this = this;
+    $this.create = function(data, res, callback) {
+        var $this = this;
 
+        var create = function(data) {
             errors.clean();
             errors.isEmpty("name", data.name, "Invalid name");
             errors.isEmpty("phoneNumber", data.phoneNumber, "Invalid phone number");
@@ -123,7 +123,7 @@ function Contacts() {
         create(data);
     };
 
-    this.getOne = function(id, res, callback) {
+    $this.getOne = function(id, res, callback) {
         var $this = this;
 
         $this.findBy("contact_id", id, res, function(err, result) {
@@ -138,7 +138,7 @@ function Contacts() {
         });
     };
 
-    this.get = function(res, callback) {
+    $this.get = function(res, callback) {
         var $this = this;
 
         connection.acquire(function(err, con) {
