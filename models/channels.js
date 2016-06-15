@@ -95,7 +95,7 @@ function Channels() {
         }
 
         connection.acquire(function(err, con) {
-            con.query('SELECT * FROM channels WHERE valid = TRUE AND operation_type = NULL LIMIT 1', function(err, result) {
+            con.query('SELECT * FROM channels WHERE valid = TRUE AND operation_type IS NULL LIMIT 1', function(err, result) {
                 if (err) {
                     con.release();
 

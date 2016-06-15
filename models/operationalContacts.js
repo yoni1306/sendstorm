@@ -78,13 +78,13 @@ function OperationalContacts() {
 
         connection.acquire(function(err, con) {
             if (operationType === config.OPERATION_TYPE.RESOLVING) {
-                con.query('SELECT distinct(contacts.contact_id) FROM contacts INNER JOIN operational_contacts ON contacts.status = "UNRESOLVED" AND targeted = FALSE AND ignored = FALSE AND channel_id = NULL AND contacts.contact_id = operational_contacts.contact_id', function(err, result) {
+                con.query('SELECT distinct(contacts.contact_id) FROM contacts INNER JOIN operational_contacts ON contacts.status = "UNRESOLVED" AND targeted = FALSE AND ignored = FALSE AND channel_id IS NULL AND contacts.contact_id = operational_contacts.contact_id', function(err, result) {
                     con.release();
 
                     callback(err, result);
                 });
             } else {
-                con.query('SELECT distinct(contacts.contact_id) FROM contacts INNER JOIN operational_contacts ON contacts.status = "RESOLVED" AND valid = TRUE AND targeted = FALSE AND ignored = FALSE AND channel_id = NULL AND contacts.contact_id = operational_contacts.contact_id', function(err, result) {
+                con.query('SELECT distinct(contacts.contact_id) FROM contacts INNER JOIN operational_contacts ON contacts.status = "RESOLVED" AND valid = TRUE AND targeted = FALSE AND ignored = FALSE AND channel_id IS NULL AND contacts.contact_id = operational_contacts.contact_id', function(err, result) {
                     con.release();
 
                     callback(err, result);
