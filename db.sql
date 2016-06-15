@@ -34,7 +34,6 @@ CREATE TABLE campaigns (
     campaign_id INT UNSIGNED AUTO_INCREMENT,
     name VARCHAR(50) DEFAULT NULL,
     account_id INT UNSIGNED NOT NULL,
-    launch_url VARCHAR(50) NOT NULL,
     PRIMARY KEY (campaign_id),
     FOREIGN KEY (account_id) REFERENCES accounts(account_id)
 );
@@ -42,6 +41,7 @@ CREATE TABLE campaigns (
 CREATE TABLE operational_contacts (
     campaign_id INT UNSIGNED NOT NULL,
     contact_id INT UNSIGNED NOT NULL,
+    channel_id INT UNSIGNED DEFAULT NULL,
     targeted BOOL DEFAULT FALSE,
     ignored BOOL DEFAULT FALSE,
     PRIMARY KEY (campaign_id, contact_id),

@@ -6,5 +6,13 @@ module.exports = {
         user: 'root',
         password: 'mysqlroot',
         database: 'sendstorm'
+    },
+    OPERATION_TYPE: {
+    	RESOLVING: "RESOLVING",
+    	TRACKING: "TRACKING"
+    },
+    OPERATION_MAX_LIMIT: {
+    	RESOLVING: 1000,
+    	TRACKING: 150
     }
 };

@@ -1,5 +1,5 @@
 var connection = require('../connection');
-var task = require("./../queueTask");
+var queueManager = require("./../queueManager");
 var errors = require("../errors");
 var async = require("async");
 var contacts = require("./contacts");
@@ -111,12 +111,7 @@ function Campaigns() {
                         if (typeof data.contacts == 'undefined')
                             return;
 
-                        var ids = [];
-                        data.contacts.forEach(function(contact) {
-                            ids.push(contact.contact_id);
-                        });
-
-                        task.execute(ids);
+                        queueManager.dataChangeHandler();
                     });
                 });
             });
