@@ -86,66 +86,66 @@ function QueueManager() {
                 return;
             }
         }
+    };
+
+    function queueTask(channelID, contactIDs, operationType) {
+        amqp.connect(config.mq, function(err, conn) {
+            conn.createChannel(function(err, ch) {
+
+                var queueName;
+
+                if (operationType === config.OPERATION_TYPE.TRACKING) {
+                    queueName = "trackContact";
+                } else {
+                    queueName = "resolveContact";
+                }
+
+                var msg = JSON.stringify({ "backgroundTask": false, "contactIDs": contactIDs, "channelID": channelID });
+
+                console.log("Sending", msg);
+
+                ch.assertQueue(queueName, { durable: true });
+                ch.sendToQueue(queueName, new Buffer(msg), { persistent: true });
+
+                if (callback)
+                    callback(true);
+
+                setTimeout(function() { conn.close(); }, 5000);
+            });
+        });
+    }
+
+    function assignContactsToChannelsForOperation(channels, contactIDs, operationType) {
+        if (!channels || !contactIDs || !operationType) {
+            errors.add('assignContactsToChannelsForOperation - params', 'Missing params - channels,contactIDs,operationType');
+            return;
+        }
+
+        channels = Array.isArray(channels) ? channels : [channels];
+
+        var channelsIndex = 0,
+            channelID, currentChannelContactsAmount, gap, assignedContacts;
+
+        channels = _.sortBy(channels, 'used_contacts_amount');
+
+        while (contactIDs.length && channelsIndex < channels.length) {
+            channelID = channels[channelsIndex].channel_id;
+            currentChannelContactsAmount = channels[channelsIndex].used_contacts_amount;
+            gap = config.OPERATION_MAX_LIMIT[operationType] - currentChannelContactsAmount;
+            assignedContacts = contactIDs.slice(0, gap);
+
+            operationalContacts.assignContactsToChannel(channelID, assignedContacts);
+
+            queueTask(channelID, assignedContacts, operationType);
+
+            contactIDs = contactIDs.splice(0, gap);
+            channelsIndex++;
+        }
+
+        if (contactIDs.length) {
+            errors.add('assignContactsToChannelsForOperation - after run', 'contacts left without being assigned to a channel');
+        }
     }
 };
-
-function queueTask(channelID, contactIDs, operationType) {
-    amqp.connect(config.mq, function(err, conn) {
-        conn.createChannel(function(err, ch) {
-
-            var queueName;
-
-            if (operationType === config.OPERATION_TYPE.TRACKING) {
-                queueName = "trackContact";
-            } else {
-                queueName = "resolveContact";
-            }
-
-            var msg = JSON.stringify({ "backgroundTask": false, "contactIDs": contactIDs, "channelID": channelID });
-
-            console.log("Sending", msg);
-
-            ch.assertQueue(queueName, { durable: true });
-            ch.sendToQueue(queueName, new Buffer(msg), { persistent: true });
-
-            if (callback)
-                callback(true);
-
-            setTimeout(function() { conn.close(); }, 5000);
-        });
-    });
-}
-
-function assignContactsToChannelsForOperation(channels, contactIDs, operationType) {
-    if (!channels || !contactIDs || !operationType) {
-        errors.add('assignContactsToChannelsForOperation - params', 'Missing params - channels,contactIDs,operationType');
-        return;
-    }
-
-    channels = Array.isArray(channels) ? channels : [channels];
-
-    var channelsIndex = 0,
-        channelID, currentChannelContactsAmount, gap, assignedContacts;
-
-    channels = _.sortBy(channels, 'used_contacts_amount');
-
-    while (contactIDs.length && channelsIndex < channels.length) {
-        channelID = channels[channelsIndex].channel_id;
-        currentChannelContactsAmount = channels[channelsIndex].used_contacts_amount;
-        gap = config.OPERATION_MAX_LIMIT[operationType] - currentChannelContactsAmount;
-        assignedContacts = contactIDs.slice(0, gap);
-
-        operationalContacts.assignContactsToChannel(channelID, assignedContacts);
-
-        queueTask(channelID, assignedContacts, operationType);
-
-        contactIDs = contactIDs.splice(0, gap);
-        channelsIndex++;
-    }
-
-    if (contactIDs.length) {
-        errors.add('assignContactsToChannelsForOperation - after run', 'contacts left without being assigned to a channel');
-    }
-}
 
 module.exports = new QueueManager();
