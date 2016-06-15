@@ -38,7 +38,7 @@ function Channels() {
     };
 
     this.getOne = function(id, res, callback) {
-        this.findBy("channel_id", id, res, function(err, result) {
+        $this.findBy("channel_id", id, res, function(err, result) {
             if (typeof callback != "undefined")
                 callback(err, result);
             else if (err)
@@ -81,7 +81,7 @@ function Channels() {
 
     this.updateUsedContactsAmount = function(channelID, addedAmount) {
         connection.acquire(function(err, con) {
-            this.getOne(channelID, null, function(channel) {
+            $this.getOne(channelID, null, function(channel) {
                 con.query('UPDATE channels SET used_contacts_amount = ? WHERE channel_id = ?', [channel.used_contacts_amount + addedAmount, channelID]);
                 con.release();
             });

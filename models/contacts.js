@@ -54,7 +54,7 @@ function Contacts() {
     };
 
     this.findByPhone = function(phone, res, callback) {
-        this.findBy("phone_number", def(phone).replace(/[^\d]/g, ""), res, callback);
+        $this.findBy("phone_number", def(phone).replace(/[^\d]/g, ""), res, callback);
     };
 
     this.create = function(data, res, callback) {
@@ -116,7 +116,7 @@ function Contacts() {
     };
 
     this.getOne = function(id, res, callback) {
-        this.findBy("contact_id", id, res, function(err, result) {
+        $this.findBy("contact_id", id, res, function(err, result) {
             if (typeof callback != "undefined")
                 callback(err, result);
             else if (err)
