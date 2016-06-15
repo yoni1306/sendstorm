@@ -9,6 +9,8 @@ function Campaigns() {
     var $this = this;
 
     this.get = function(res) {
+        var $this = this;
+        
         connection.acquire(function(err, con) {
             con.query('SELECT * FROM campaigns', function(err, result) {
                 con.release();
@@ -26,6 +28,8 @@ function Campaigns() {
     };
 
     this.getOne = function(id, res, callback) {
+        var $this = this;
+
         connection.acquire(function(err, con) {
             con.query('SELECT * FROM campaigns WHERE campaign_id = ?', [id], function(err, result) {
                 con.release();
@@ -46,46 +50,49 @@ function Campaigns() {
     };
 
     this.delete = function(id, res, callback) {
+        var $this = this;
+
         connection.acquire(function(err, con) {
-	    con.query('DELETE FROM operational_contacts WHERE campaign_id = ?', [id], function(err, result) {
-            	con.query('DELETE FROM campaigns WHERE campaign_id = ?', [id], function(err, result) {
+            con.query('DELETE FROM operational_contacts WHERE campaign_id = ?', [id], function(err, result) {
+                con.query('DELETE FROM campaigns WHERE campaign_id = ?', [id], function(err, result) {
                     con.release();
-	            if (typeof result == "undefined" || result.affectedRows == 0) {
-        	    	res.send("No such campaign found", 500);
-                	return;
-	            } else {
-                    	res.send('{"status":"ok"}');
-		    }
+                    if (typeof result == "undefined" || result.affectedRows == 0) {
+                        res.send("No such campaign found", 500);
+                        return;
+                    } else {
+                        res.send('{"status":"ok"}');
+                    }
                 });
             });
         });
     };
 
     this.create = function(data, res) {
+        var $this = this;
 
         errors
             .clean()
             .isEmpty("name", data.name, "Invalid name");
-            //.isURL("launchUrl", data.launchUrl, "Invalid launch URL");
+        //.isURL("launchUrl", data.launchUrl, "Invalid launch URL");
 
         if (!Array.isArray(data.contacts))
             data.contacts = [];
 
         if (Array.isArray(data.contactIDs))
             data.contactIDs.forEach(function(id) {
-                data.contacts.push({"contact_id": id});
+                data.contacts.push({ "contact_id": id });
             });
         delete data.contactIDs;
 
         if (errors.has()) {
-            res.send({errors: errors.get()}, 400);
+            res.send({ errors: errors.get() }, 400);
             return;
         }
 
         connection.acquire(function(err, con) {
-            con.query('INSERT INTO campaigns set ?', {"name": data.name, "account_id": 1} , function(err, result) {
+            con.query('INSERT INTO campaigns set ?', { "name": data.name, "account_id": 1 }, function(err, result) {
                 if (err) {
-                    res.send({message: 'Campaign creation failed'}, 400);
+                    res.send({ message: 'Campaign creation failed' }, 400);
                     con.release();
                     return;
                 }

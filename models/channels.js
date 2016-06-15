@@ -13,6 +13,8 @@ function Channels() {
     }
 
     this.findByIds = function(ids, callback) {
+        var $this = this;
+
         connection.acquire(function(err, con) {
             var tmp = ids.map(function(id) {
                 return parseInt(id);
@@ -25,6 +27,8 @@ function Channels() {
     };
 
     this.findBy = function(field, value, res, callback) {
+        var $this = this;
+
         connection.acquire(function(err, con) {
             con.query('SELECT * FROM channels WHERE `' + field + '` = ?', [def(value)], function(err, result) {
                 con.release();
@@ -38,6 +42,8 @@ function Channels() {
     };
 
     this.getOne = function(id, res, callback) {
+        var $this = this;
+
         $this.findBy("channel_id", id, res, function(err, result) {
             if (typeof callback != "undefined")
                 callback(err, result);
@@ -51,6 +57,8 @@ function Channels() {
     };
 
     this.get = function(res, callback) {
+        var $this = this;
+
         connection.acquire(function(err, con) {
             con.query('SELECT * FROM channels', function(err, result) {
                 con.release();
@@ -65,6 +73,8 @@ function Channels() {
     };
 
     this.findAvailableChannelsForOperation = function(operationType, callback) {
+        var $this = this;
+
         if (!operationType) {
             callback('Operation type is missing', null);
             return;
@@ -80,6 +90,8 @@ function Channels() {
     };
 
     this.updateUsedContactsAmount = function(channelID, addedAmount) {
+        var $this = this;
+
         connection.acquire(function(err, con) {
             $this.getOne(channelID, null, function(channel) {
                 con.query('UPDATE channels SET used_contacts_amount = ? WHERE channel_id = ?', [channel.used_contacts_amount + addedAmount, channelID]);
@@ -89,6 +101,8 @@ function Channels() {
     };
 
     this.assignNewChannelForOperation = function(operationType, callback) {
+        var $this = this;
+        
         if (!operationType) {
             callback('Operation type is missing', null);
             return;

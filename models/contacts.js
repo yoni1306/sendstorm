@@ -13,6 +13,8 @@ function Contacts() {
     }
 
     this.attach = function(campaigns, callback) {
+        var $this = this;
+
         connection.acquire(function(err, con) {
             async.map(campaigns, function(campaign, cb) {
                 con.query("SELECT contacts.* FROM contacts INNER JOIN operational_contacts ON operational_contacts.campaign_id = ? AND contacts.contact_id = operational_contacts.contact_id", [campaign.campaign_id], function(err, result) {
@@ -29,6 +31,8 @@ function Contacts() {
     };
 
     this.findByIds = function(ids, callback) {
+        var $this = this;
+
         connection.acquire(function(err, con) {
             var tmp = ids.map(function(id) {
                 return parseInt(id);
@@ -41,8 +45,10 @@ function Contacts() {
     };
 
     this.findBy = function(field, value, res, callback) {
+        var $this = this;
+
         connection.acquire(function(err, con) {
-            con.query('SELECT * FROM contacts WHERE `'+field+'` = ?', [def(value)], function(err, result) {
+            con.query('SELECT * FROM contacts WHERE `' + field + '` = ?', [def(value)], function(err, result) {
                 con.release();
                 if (result && (result.length > 0))
                     callback(err, result[0]);
@@ -54,12 +60,14 @@ function Contacts() {
     };
 
     this.findByPhone = function(phone, res, callback) {
+        var $this = this;
+
         $this.findBy("phone_number", def(phone).replace(/[^\d]/g, ""), res, callback);
     };
 
     this.create = function(data, res, callback) {
-
         var create = function(data) {
+            var $this = this;
 
             errors.clean();
             errors.isEmpty("name", data.name, "Invalid name");
@@ -69,7 +77,7 @@ function Contacts() {
                 if (callback)
                     callback(errors.get(), null);
                 else
-                    res.send({errors: errors.get()}, 400);
+                    res.send({ errors: errors.get() }, 400);
                 return;
             }
 
@@ -77,7 +85,7 @@ function Contacts() {
                 con.query('INSERT INTO contacts SET ?', {
                     name: data.name,
                     phone_number: def(data.phoneNumber).replace(/[^\d]/g, ""),
-                    phone_code: def(data.phoneNumber).replace(/[^\d]/g, "").substr(0,3)
+                    phone_code: def(data.phoneNumber).replace(/[^\d]/g, "").substr(0, 3)
                 }, function(err, result) {
                     con.release();
                     if (!err) {
@@ -104,11 +112,11 @@ function Contacts() {
         };
 
         if (typeof data.id != "undefined") {
-            this.getOne(data.id, res, ecb);
+            $this.getOne(data.id, res, ecb);
             return;
         }
         if (typeof data.phoneNumber != "undefined") {
-            this.findByPhone(data.phoneNumber, res, ecb);
+            $this.findByPhone(data.phoneNumber, res, ecb);
             return;
         }
 
@@ -116,6 +124,8 @@ function Contacts() {
     };
 
     this.getOne = function(id, res, callback) {
+        var $this = this;
+
         $this.findBy("contact_id", id, res, function(err, result) {
             if (typeof callback != "undefined")
                 callback(err, result);
@@ -129,6 +139,8 @@ function Contacts() {
     };
 
     this.get = function(res, callback) {
+        var $this = this;
+
         connection.acquire(function(err, con) {
             con.query('SELECT * FROM contacts', function(err, result) {
                 con.release();

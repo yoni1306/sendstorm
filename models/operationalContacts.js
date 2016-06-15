@@ -15,6 +15,8 @@ function OperationalContacts() {
     }
 
     this.findByIds = function(ids, campaign_id, callback) {
+        var $this = this;
+        
         connection.acquire(function(err, con) {
             var tmp = ids.map(function(id) {
                 return parseInt(id);
@@ -27,6 +29,8 @@ function OperationalContacts() {
     };
 
     this.findBy = function(field, value, res, callback) {
+        var $this = this;
+
         connection.acquire(function(err, con) {
             con.query('SELECT * FROM operational_contacts WHERE `' + field + '` = ?', [def(value)], function(err, result) {
                 con.release();
@@ -40,10 +44,14 @@ function OperationalContacts() {
     };
 
     this.findByPhone = function(phone, res, callback) {
+        var $this = this;
+
         $this.findBy("phone_number", def(phone).replace(/[^\d]/g, ""), res, callback);
     };
 
     this.getOne = function(id, res, callback) {
+        var $this = this;
+
         $this.findBy("contact_id", id, res, function(err, result) {
             if (typeof callback != "undefined")
                 callback(err, result);
@@ -57,6 +65,8 @@ function OperationalContacts() {
     };
 
     this.get = function(res, callback) {
+        var $this = this;
+
         connection.acquire(function(err, con) {
             con.query('SELECT * FROM operational_contacts', function(err, result) {
                 con.release();
@@ -71,6 +81,8 @@ function OperationalContacts() {
     };
 
     this.findContactsForOperation = function(operationType, callback) {
+        var $this = this;
+
         if(!operationType){
             callback('Operation type is missing', null);
             return;
@@ -94,6 +106,8 @@ function OperationalContacts() {
     };
 
     this.assignContactsToChannel = function(channelID, contactIDs) {
+        var $this = this;
+
         connection.acquire(function(err, con) {
             channels.updateUsedContactsAmount(channelID, contactIDs.length);
 
