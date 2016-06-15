@@ -2,6 +2,7 @@ var connection = require('../connection');
 var errors = require("../errors");
 var async = require("async");
 var channels = require("./channels");
+var config = require("../config");
 
 function OperationalContacts() {
 
