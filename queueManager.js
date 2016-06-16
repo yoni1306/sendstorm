@@ -107,9 +107,6 @@ function QueueManager() {
                 ch.assertQueue(queueName, { durable: true });
                 ch.sendToQueue(queueName, new Buffer(msg), { persistent: true });
 
-                if (callback)
-                    callback(true);
-
                 setTimeout(function() { conn.close(); }, 5000);
             });
         });
