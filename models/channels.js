@@ -124,6 +124,8 @@ function Channels() {
                     return;
                 }
 
+                result = result[0];
+                
                 con.query('UPDATE channels set operation_type = ? WHERE channel_id = ?', [operationType, result.channel_id]);
 
                 con.release();
