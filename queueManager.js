@@ -126,7 +126,7 @@ function QueueManager() {
                     callback();
                 }
 
-                setTimeout(function() { conn.close(); }, 5000);
+                // setTimeout(function() { conn.close(); }, 5000);
             });
         });
     }
