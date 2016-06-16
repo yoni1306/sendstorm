@@ -12,7 +12,7 @@ function Channels() {
         return value.toString();
     }
 
-    this.findByIds = function(ids, callback) {
+    self.findByIds = function(ids, callback) {
         var self = this;
 
         connection.acquire(function(err, con) {
@@ -26,7 +26,7 @@ function Channels() {
         });
     };
 
-    this.findBy = function(field, value, res, callback) {
+    self.findBy = function(field, value, res, callback) {
         var self = this;
 
         connection.acquire(function(err, con) {
@@ -41,7 +41,7 @@ function Channels() {
 
     };
 
-    this.getOne = function(id, res, callback) {
+    self.getOne = function(id, res, callback) {
         var self = this;
 
         self.findBy("channel_id", id, res, function(err, result) {
@@ -56,7 +56,7 @@ function Channels() {
         });
     };
 
-    this.get = function(res, callback) {
+    self.get = function(res, callback) {
         var self = this;
 
         connection.acquire(function(err, con) {
@@ -72,7 +72,7 @@ function Channels() {
         });
     };
 
-    this.findAvailableChannelsForOperation = function(operationType, callback) {
+    self.findAvailableChannelsForOperation = function(operationType, callback) {
         var self = this;
 
         if (!operationType) {
@@ -89,7 +89,7 @@ function Channels() {
         });
     };
 
-    this.updateUsedContactsAmount = function(channelID, addedAmount, callback) {
+    self.updateUsedContactsAmount = function(channelID, addedAmount, callback) {
         var self = this;
 
         connection.acquire(function(err, con) {
@@ -107,7 +107,7 @@ function Channels() {
         });
     };
 
-    this.assignNewChannelForOperation = function(operationType, callback) {
+    self.assignNewChannelForOperation = function(operationType, callback) {
         var self = this;
 
         if (!operationType) {
