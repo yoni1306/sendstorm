@@ -49,43 +49,43 @@ function QueueManager() {
             return;
         }
 
-        if (!isBackgroundTask) {
-            operationalContacts.findContactsForOperation(config.OPERATION_TYPE.TRACKING, function(err, contactIDs) {
-                if (err) {
-                    errors.add('findContactsForResolving - Error', err);
-                    return;
-                }
+        // if (!isBackgroundTask) {
+        //     operationalContacts.findContactsForOperation(config.OPERATION_TYPE.TRACKING, function(err, contactIDs) {
+        //         if (err) {
+        //             errors.add('findContactsForResolving - Error', err);
+        //             return;
+        //         }
 
-                if (contactIDs && contactIDs.length) {
-                    channels.findAvailableChannelsForOperation(config.OPERATION_TYPE.TRACKING, function(err, availableChannels) {
-                        if (err) {
-                            errors.add('findAvailableChannelsForResolving - Error', err);
-                            return;
-                        }
+        //         if (contactIDs && contactIDs.length) {
+        //             channels.findAvailableChannelsForOperation(config.OPERATION_TYPE.TRACKING, function(err, availableChannels) {
+        //                 if (err) {
+        //                     errors.add('findAvailableChannelsForResolving - Error', err);
+        //                     return;
+        //                 }
 
-                        if (availableChannels && availableChannels.length) {
-                            assignContactsToChannelsForOperation(availableChannels, contactIDs, config.OPERATION_TYPE.TRACKING);
-                        } else {
-                            channels.assignNewChannelForOperation(config.OPERATION_TYPE.TRACKING, function(err, channel) {
-                                if (err) {
-                                    errors.add('assignNewChannelForResolving - Error', err);
-                                    return;
-                                }
+        //                 if (availableChannels && availableChannels.length) {
+        //                     assignContactsToChannelsForOperation(availableChannels, contactIDs, config.OPERATION_TYPE.TRACKING);
+        //                 } else {
+        //                     channels.assignNewChannelForOperation(config.OPERATION_TYPE.TRACKING, function(err, channel) {
+        //                         if (err) {
+        //                             errors.add('assignNewChannelForResolving - Error', err);
+        //                             return;
+        //                         }
 
-                                if (channel) {
-                                    assignContactsToChannelsForOperation(channel, contactIDs, config.OPERATION_TYPE.TRACKING);
-                                }
-                            });
-                        }
-                    });
-                }
-            });
+        //                         if (channel) {
+        //                             assignContactsToChannelsForOperation(channel, contactIDs, config.OPERATION_TYPE.TRACKING);
+        //                         }
+        //                     });
+        //                 }
+        //             });
+        //         }
+        //     });
 
-            if (errors.has) {
-                errors.dump();
-                return;
-            }
-        }
+        //     if (errors.has) {
+        //         errors.dump();
+        //         return;
+        //     }
+        // }
     };
 
     function queueTask(channelID, contactIDs, operationType) {
