@@ -12,7 +12,7 @@ module.exports = {
     	TRACKING: "TRACKING"
     },
     OPERATION_MAX_LIMIT: {
-    	RESOLVING: 1000,
-    	TRACKING: 150
+    	RESOLVING: 3,
+    	TRACKING: 2
     }
 };

@@ -139,8 +139,9 @@ function QueueManager() {
 
                 queueTask(channelID, assignedContacts, operationType);
 
-                contactIDs = contactIDs.splice(0, gap);
             });
+
+            contactIDs = contactIDs.splice(gap);
 
             channelsIndex++;
         }
