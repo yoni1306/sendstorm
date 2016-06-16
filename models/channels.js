@@ -128,6 +128,8 @@ function Channels() {
 
                 con.release();
 
+                result.operation_type = operationType;
+
                 callback(err, result);
             });
         });
