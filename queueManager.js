@@ -154,6 +154,8 @@ function QueueManager() {
                 currentChannelContactsAmount = channels[channelsIndex].used_contacts_amount;
                 gap = config.OPERATION_MAX_LIMIT[operationType] - currentChannelContactsAmount;
                 assignedContacts = contactIDs.slice(0, gap);
+                contactIDs = contactIDs.splice(gap);
+                channelsIndex++;
 
                 operationalContacts.assignContactsToChannel(channelID, assignedContacts, function(err) {
                     if (err) {
@@ -166,10 +168,6 @@ function QueueManager() {
                         resolve();
                     });
                 });
-
-                contactIDs = contactIDs.splice(gap);
-
-                channelsIndex++;
             });
         }).then(function() {
             // Notice we can chain it because it's a Promise, 
