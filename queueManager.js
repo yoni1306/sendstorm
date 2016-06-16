@@ -128,7 +128,7 @@ function QueueManager() {
 
         channels = _.sortBy(channels, 'used_contacts_amount');
 
-        while (!errors.has && contactIDs.length && channelsIndex < channels.length) {
+        while (!errors.has() && contactIDs.length && channelsIndex < channels.length) {
             channelID = channels[channelsIndex].channel_id;
             currentChannelContactsAmount = channels[channelsIndex].used_contacts_amount;
             gap = config.OPERATION_MAX_LIMIT[operationType] - currentChannelContactsAmount;
