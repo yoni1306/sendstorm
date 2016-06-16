@@ -4,7 +4,7 @@ var async = require("async");
 
 function Contacts() {
 
-    var $this = this;
+    var self = this;
 
     function def(value) {
         if (typeof value == "undefined")
@@ -12,8 +12,8 @@ function Contacts() {
         return value.toString();
     }
 
-    $this.attach = function(campaigns, callback) {
-        var $this = this;
+    self.attach = function(campaigns, callback) {
+        var self = this;
 
         connection.acquire(function(err, con) {
             async.map(campaigns, function(campaign, cb) {
@@ -30,8 +30,8 @@ function Contacts() {
         });
     };
 
-    $this.findByIds = function(ids, callback) {
-        var $this = this;
+    self.findByIds = function(ids, callback) {
+        var self = this;
 
         connection.acquire(function(err, con) {
             var tmp = ids.map(function(id) {
@@ -44,8 +44,8 @@ function Contacts() {
         });
     };
 
-    $this.findBy = function(field, value, res, callback) {
-        var $this = this;
+    self.findBy = function(field, value, res, callback) {
+        var self = this;
 
         connection.acquire(function(err, con) {
             con.query('SELECT * FROM contacts WHERE `' + field + '` = ?', [def(value)], function(err, result) {
@@ -59,14 +59,14 @@ function Contacts() {
 
     };
 
-    $this.findByPhone = function(phone, res, callback) {
-        var $this = this;
+    self.findByPhone = function(phone, res, callback) {
+        var self = this;
 
-        $this.findBy("phone_number", def(phone).replace(/[^\d]/g, ""), res, callback);
+        self.findBy("phone_number", def(phone).replace(/[^\d]/g, ""), res, callback);
     };
 
-    $this.create = function(data, res, callback) {
-        var $this = this;
+    self.create = function(data, res, callback) {
+        var self = this;
 
         var create = function(data) {
             errors.clean();
@@ -89,7 +89,7 @@ function Contacts() {
                 }, function(err, result) {
                     con.release();
                     if (!err) {
-                        $this.getOne(result.insertId, res, function(err, result) {
+                        self.getOne(result.insertId, res, function(err, result) {
                             if (typeof callback != "undefined")
                                 callback(err, result);
                             else
@@ -112,21 +112,21 @@ function Contacts() {
         };
 
         if (typeof data.id != "undefined") {
-            $this.getOne(data.id, res, ecb);
+            self.getOne(data.id, res, ecb);
             return;
         }
         if (typeof data.phoneNumber != "undefined") {
-            $this.findByPhone(data.phoneNumber, res, ecb);
+            self.findByPhone(data.phoneNumber, res, ecb);
             return;
         }
 
         create(data);
     };
 
-    $this.getOne = function(id, res, callback) {
-        var $this = this;
+    self.getOne = function(id, res, callback) {
+        var self = this;
 
-        $this.findBy("contact_id", id, res, function(err, result) {
+        self.findBy("contact_id", id, res, function(err, result) {
             if (typeof callback != "undefined")
                 callback(err, result);
             else if (err)
@@ -138,8 +138,8 @@ function Contacts() {
         });
     };
 
-    $this.get = function(res, callback) {
-        var $this = this;
+    self.get = function(res, callback) {
+        var self = this;
 
         connection.acquire(function(err, con) {
             con.query('SELECT * FROM contacts', function(err, result) {

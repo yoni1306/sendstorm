@@ -4,7 +4,7 @@ var async = require("async");
 var config = require('../config');
 
 function Channels() {
-    var $this = this;
+    var self = this;
 
     function def(value) {
         if (typeof value == "undefined")
@@ -12,8 +12,8 @@ function Channels() {
         return value.toString();
     }
 
-    $this.findByIds = function(ids, callback) {
-        var $this = this;
+    self.findByIds = function(ids, callback) {
+        var self = this;
 
         connection.acquire(function(err, con) {
             var tmp = ids.map(function(id) {
@@ -26,8 +26,8 @@ function Channels() {
         });
     };
 
-    $this.findBy = function(field, value, res, callback) {
-        var $this = this;
+    self.findBy = function(field, value, res, callback) {
+        var self = this;
 
         connection.acquire(function(err, con) {
             con.query('SELECT * FROM channels WHERE `' + field + '` = ?', [def(value)], function(err, result) {
@@ -41,10 +41,10 @@ function Channels() {
 
     };
 
-    $this.getOne = function(id, res, callback) {
-        var $this = this;
+    self.getOne = function(id, res, callback) {
+        var self = this;
 
-        $this.findBy("channel_id", id, res, function(err, result) {
+        self.findBy("channel_id", id, res, function(err, result) {
             if (typeof callback != "undefined")
                 callback(err, result);
             else if (err)
@@ -56,8 +56,8 @@ function Channels() {
         });
     };
 
-    $this.get = function(res, callback) {
-        var $this = this;
+    self.get = function(res, callback) {
+        var self = this;
 
         connection.acquire(function(err, con) {
             con.query('SELECT * FROM channels', function(err, result) {
@@ -72,8 +72,8 @@ function Channels() {
         });
     };
 
-    $this.findAvailableChannelsForOperation = function(operationType, callback) {
-        var $this = this;
+    self.findAvailableChannelsForOperation = function(operationType, callback) {
+        var self = this;
 
         if (!operationType) {
             callback('Operation type is missing', null);
@@ -89,11 +89,11 @@ function Channels() {
         });
     };
 
-    $this.updateUsedContactsAmount = function(channelID, addedAmount, callback) {
-        var $this = this;
+    self.updateUsedContactsAmount = function(channelID, addedAmount, callback) {
+        var self = this;
 
         connection.acquire(function(err, con) {
-            $this.getOne(channelID, null, function(err, channel) {
+            self.getOne(channelID, null, function(err, channel) {
                 if (err) {
                     con.release();
                     callback(err);
@@ -107,8 +107,8 @@ function Channels() {
         });
     };
 
-    $this.assignNewChannelForOperation = function(operationType, callback) {
-        var $this = this;
+    self.assignNewChannelForOperation = function(operationType, callback) {
+        var self = this;
 
         if (!operationType) {
             callback('Operation type is missing', null);

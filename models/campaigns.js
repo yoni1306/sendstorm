@@ -6,10 +6,10 @@ var contacts = require("./contacts");
 
 function Campaigns() {
 
-    var $this = this;
+    var self = this;
 
-    $this.get = function(res) {
-        var $this = this;
+    self.get = function(res) {
+        var self = this;
 
         connection.acquire(function(err, con) {
             con.query('SELECT * FROM campaigns', function(err, result) {
@@ -27,8 +27,8 @@ function Campaigns() {
         });
     };
 
-    $this.getOne = function(id, res, callback) {
-        var $this = this;
+    self.getOne = function(id, res, callback) {
+        var self = this;
 
         connection.acquire(function(err, con) {
             con.query('SELECT * FROM campaigns WHERE campaign_id = ?', [id], function(err, result) {
@@ -49,8 +49,8 @@ function Campaigns() {
         });
     };
 
-    $this.delete = function(id, res, callback) {
-        var $this = this;
+    self.delete = function(id, res, callback) {
+        var self = this;
 
         connection.acquire(function(err, con) {
             con.query('DELETE FROM operational_contacts WHERE campaign_id = ?', [id], function(err, result) {
@@ -67,8 +67,8 @@ function Campaigns() {
         });
     };
 
-    $this.create = function(data, res) {
-        var $this = this;
+    self.create = function(data, res) {
+        var self = this;
 
         errors
             .clean()
@@ -113,7 +113,7 @@ function Campaigns() {
                     });
                 }, function(err, result) {
                     con.release();
-                    $this.getOne(campaignId, res, function(data) {
+                    self.getOne(campaignId, res, function(data) {
                         res.send(data);
                         if (typeof data.contacts == 'undefined')
                             return;
