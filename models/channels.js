@@ -89,13 +89,20 @@ function Channels() {
         });
     };
 
-    $this.updateUsedContactsAmount = function(channelID, addedAmount) {
+    $this.updateUsedContactsAmount = function(channelID, addedAmount, callback) {
         var $this = this;
 
         connection.acquire(function(err, con) {
-            $this.getOne(channelID, null, function(channel) {
+            $this.getOne(channelID, null, function(err, channel) {
+                if (err) {
+                    con.release();
+                    callback(err);
+                    return;
+                }
+
                 con.query('UPDATE channels SET used_contacts_amount = ? WHERE channel_id = ?', [channel.used_contacts_amount + addedAmount, channelID]);
                 con.release();
+                callback();
             });
         });
     };

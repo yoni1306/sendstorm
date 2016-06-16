@@ -83,7 +83,7 @@ function OperationalContacts() {
     $this.findContactsForOperation = function(operationType, callback) {
         var $this = this;
 
-        if(!operationType){
+        if (!operationType) {
             callback('Operation type is missing', null);
             return;
         }
@@ -105,19 +105,27 @@ function OperationalContacts() {
         });
     };
 
-    $this.assignContactsToChannel = function(channelID, contactIDs) {
+    $this.assignContactsToChannel = function(channelID, contactIDs, callback) {
         var $this = this;
 
         connection.acquire(function(err, con) {
-            channels.updateUsedContactsAmount(channelID, contactIDs.length);
+            channels.updateUsedContactsAmount(channelID, contactIDs.length, function(err) {
+                if (err) {
+                    con.release();
+                    callback(err);
+                    return;
+                }
 
-            var tmp = contactIDs.map(function(id) {
-                return parseInt(id);
-            }).join(",");
+                var tmp = contactIDs.map(function(id) {
+                    return parseInt(id);
+                }).join(",");
 
-            con.query('UPDATE operational_contacts SET channel_id = ? WHERE contact_id IN (' + tmp + ')', [channelID]);
+                con.query('UPDATE operational_contacts SET channel_id = ? WHERE contact_id IN (' + tmp + ')', [channelID]);
 
-            con.release();
+                con.release();
+
+                callback();
+            });
         });
     }
 }
