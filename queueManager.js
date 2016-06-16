@@ -6,8 +6,24 @@ var amqp = require('amqplib/callback_api');
 var config = require('./config');
 var errors = require('./errors');
 var _ = require('underscore');
+var Promise = require('bluebird');
 
 connection.init();
+
+var promiseWhile = function(condition, action) {
+    var resolver = Promise.defer();
+
+    var loop = function() {
+        if (!condition()) return resolver.resolve();
+        return Promise.cast(action())
+            .then(loop)
+            .catch(resolver.reject);
+    };
+
+    process.nextTick(loop);
+
+    return resolver.promise;
+};
 
 function QueueManager() {
     this.dataChangeHandler = function(isBackgroundTask, callback) {
@@ -125,30 +141,44 @@ function QueueManager() {
 
         channels = _.sortBy(channels, 'used_contacts_amount');
 
-        while (!errors.has() && contactIDs.length && channelsIndex < channels.length) {
-            channelID = channels[channelsIndex].channel_id;
-            currentChannelContactsAmount = channels[channelsIndex].used_contacts_amount;
-            gap = config.OPERATION_MAX_LIMIT[operationType] - currentChannelContactsAmount;
-            assignedContacts = contactIDs.slice(0, gap);
+        promiseWhile(function() {
+            // Condition for stopping
+            return !errors.has() && contactIDs.length && channelsIndex < channels.length;
+        }, function() {
+            // Action to run, should return a promise
+            return new Promise(function(resolve, reject) {
+                channelID = channels[channelsIndex].channel_id;
+                currentChannelContactsAmount = channels[channelsIndex].used_contacts_amount;
+                gap = config.OPERATION_MAX_LIMIT[operationType] - currentChannelContactsAmount;
+                assignedContacts = contactIDs.slice(0, gap);
 
-            operationalContacts.assignContactsToChannel(channelID, assignedContacts, function(err) {
-                if (err) {
-                    errors.add('assignContactsToChannelsForOperation - during run', err);
-                    return;
-                }
+                operationalContacts.assignContactsToChannel(channelID, assignedContacts, function(err) {
+                    if (err) {
+                        errors.add('assignContactsToChannelsForOperation - during run', err);
+                        reject();
+                        return;
+                    }
 
-                queueTask(channelID, assignedContacts, operationType);
+                    queueTask(channelID, assignedContacts, operationType);
 
+                    resolve();
+                });
+
+                contactIDs = contactIDs.splice(gap);
+
+                channelsIndex++;
             });
+        }).then(function() {
+            // Notice we can chain it because it's a Promise, 
+            // this will run after completion of the promiseWhile Promise!
+            if (contactIDs.length) {
+                errors.add('assignContactsToChannelsForOperation - after run', 'contacts left without being assigned to a channel');
+            }
 
-            contactIDs = contactIDs.splice(gap);
-
-            channelsIndex++;
-        }
-
-        if (contactIDs.length) {
-            errors.add('assignContactsToChannelsForOperation - after run', 'contacts left without being assigned to a channel');
-        }
+            if (errors.has()) {
+                errors.dump();
+            }
+        });
     }
 };
 
