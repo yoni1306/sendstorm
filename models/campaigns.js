@@ -8,7 +8,7 @@ function Campaigns() {
 
     var self = this;
 
-    self.get = function(res) {
+    this.get = function(res) {
         var self = this;
 
         connection.acquire(function(err, con) {
@@ -27,7 +27,7 @@ function Campaigns() {
         });
     };
 
-    self.getOne = function(id, res, callback) {
+    this.getOne = function(id, res, callback) {
         var self = this;
 
         connection.acquire(function(err, con) {
@@ -49,7 +49,7 @@ function Campaigns() {
         });
     };
 
-    self.delete = function(id, res, callback) {
+    this.delete = function(id, res, callback) {
         var self = this;
 
         connection.acquire(function(err, con) {
@@ -67,7 +67,7 @@ function Campaigns() {
         });
     };
 
-    self.create = function(data, res) {
+    this.create = function(data, res) {
         var self = this;
 
         errors

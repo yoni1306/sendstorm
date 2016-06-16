@@ -12,7 +12,7 @@ function Contacts() {
         return value.toString();
     }
 
-    self.attach = function(campaigns, callback) {
+    this.attach = function(campaigns, callback) {
         var self = this;
 
         connection.acquire(function(err, con) {
@@ -30,7 +30,7 @@ function Contacts() {
         });
     };
 
-    self.findByIds = function(ids, callback) {
+    this.findByIds = function(ids, callback) {
         var self = this;
 
         connection.acquire(function(err, con) {
@@ -44,7 +44,7 @@ function Contacts() {
         });
     };
 
-    self.findBy = function(field, value, res, callback) {
+    this.findBy = function(field, value, res, callback) {
         var self = this;
 
         connection.acquire(function(err, con) {
@@ -59,13 +59,13 @@ function Contacts() {
 
     };
 
-    self.findByPhone = function(phone, res, callback) {
+    this.findByPhone = function(phone, res, callback) {
         var self = this;
 
         self.findBy("phone_number", def(phone).replace(/[^\d]/g, ""), res, callback);
     };
 
-    self.create = function(data, res, callback) {
+    this.create = function(data, res, callback) {
         var self = this;
 
         var create = function(data) {
@@ -123,7 +123,7 @@ function Contacts() {
         create(data);
     };
 
-    self.getOne = function(id, res, callback) {
+    this.getOne = function(id, res, callback) {
         var self = this;
 
         self.findBy("contact_id", id, res, function(err, result) {
@@ -138,7 +138,7 @@ function Contacts() {
         });
     };
 
-    self.get = function(res, callback) {
+    this.get = function(res, callback) {
         var self = this;
 
         connection.acquire(function(err, con) {
