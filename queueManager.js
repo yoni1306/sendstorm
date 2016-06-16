@@ -104,10 +104,9 @@ function QueueManager() {
         // }
     };
 
-    function queueTask(channelID, contactIDs, operationType) {
+    function queueTask(channelID, contactIDs, operationType, callback) {
         amqp.connect(config.mq, function(err, conn) {
             conn.createChannel(function(err, ch) {
-
                 var queueName;
 
                 if (operationType === config.OPERATION_TYPE.TRACKING) {
@@ -122,6 +121,10 @@ function QueueManager() {
 
                 ch.assertQueue(queueName, { durable: true });
                 ch.sendToQueue(queueName, new Buffer(msg), { persistent: true });
+
+                if (callback) {
+                    callback();
+                }
 
                 setTimeout(function() { conn.close(); }, 5000);
             });
@@ -159,9 +162,9 @@ function QueueManager() {
                         return;
                     }
 
-                    queueTask(channelID, assignedContacts, operationType);
-
-                    resolve();
+                    queueTask(channelID, assignedContacts, operationType, function() {
+                        resolve();
+                    });
                 });
 
                 contactIDs = contactIDs.splice(gap);
