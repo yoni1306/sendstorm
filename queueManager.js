@@ -166,7 +166,6 @@ function QueueManager() {
                 operationalContacts.assignContactsToChannel(channelID, assignedContacts, function(err) {
                     if (err) {
                         errors.add('assignContactsToChannelsForOperation - during run', err);
-                        reject(err);
                         return;
                     }
 
@@ -181,11 +180,7 @@ function QueueManager() {
             if (errors.has()) {
                 errors.dump();
             }
-        }, then(function(err) {
-            if (errors.has()) {
-                errors.dump();
-            }
-        }));
+        });
     }
 };
 
