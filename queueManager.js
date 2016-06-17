@@ -149,7 +149,7 @@ function QueueManager() {
 
         channels = _.sortBy(channels, 'used_contacts_amount');
 
-        return promiseWhile(function() {
+        promiseWhile(function() {
             // Condition for stopping
             return !errors.has() && contactIDs.length && channelsIndex < channels.length;
         }, function() {
