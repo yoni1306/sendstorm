@@ -149,7 +149,7 @@ function QueueManager() {
 
         channels = _.sortBy(channels, 'used_contacts_amount');
 
-        promiseWhile(function() {
+        return promiseWhile(function() {
             // Condition for stopping
             return !errors.has() && contactIDs.length && channelsIndex < channels.length;
         }, function() {
@@ -166,7 +166,7 @@ function QueueManager() {
                 operationalContacts.assignContactsToChannel(channelID, assignedContacts, function(err) {
                     if (err) {
                         errors.add('assignContactsToChannelsForOperation - during run', err);
-                        reject();
+                        reject(err);
                         return;
                     }
 
@@ -181,7 +181,11 @@ function QueueManager() {
             if (errors.has()) {
                 errors.dump();
             }
-        });
+        }, then(function(err) {
+            if (errors.has()) {
+                errors.dump();
+            }
+        }));
     }
 };
 
