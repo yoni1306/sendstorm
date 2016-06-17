@@ -107,32 +107,38 @@ function Channels() {
         });
     };
 
-    self.assignNewChannelForOperation = function(operationType, callback) {
+    self.allocateNewChannelsForOperation = function(operationType, contactsAmountToAllocate, callback) {
         var self = this;
 
-        if (!operationType) {
-            callback('Operation type is missing', null);
+        if (!operationType || !contactsAmountToAllocate) {
+            callback('Operation type or contactsAmountToAllocate is missing', null);
             return;
         }
 
+        var howManyChannelsAreNeeded = Math.ceil(contactsAmountToAllocate / config.OPERATION_MAX_LIMIT[operationType]);
+
         connection.acquire(function(err, con) {
-            con.query('SELECT * FROM channels WHERE valid = TRUE AND operation_type IS NULL LIMIT 1', function(err, result) {
+            con.query('SELECT * FROM channels WHERE valid = TRUE AND operation_type IS NULL LIMIT ?', [howManyChannelsAreNeeded], function(err, newChannels) {
                 if (err) {
                     con.release();
 
-                    callback(err, result);
+                    callback(err, newChannels);
                     return;
                 }
 
-                result = result[0];
-                
-                con.query('UPDATE channels set operation_type = ? WHERE channel_id = ?', [operationType, result.channel_id]);
+                var channelIDs = newChannels.map(function(id) {
+                    return parseInt(id);
+                }).join(",");
+
+                con.query('UPDATE channels set operation_type = ? WHERE channel_id IN (' + channelIDs + ')', [operationType]);
 
                 con.release();
 
-                result.operation_type = operationType;
+                newChannels.map(function(channel){
+                    channel.operation_type = operationType;
+                });
 
-                callback(err, result);
+                callback(err, newChannels);
             });
         });
     }

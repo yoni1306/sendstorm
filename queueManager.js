@@ -37,24 +37,29 @@ function QueueManager() {
                 contactIDs = _.pluck(contactIDs, 'contact_id');
 
                 channels.findAvailableChannelsForOperation(config.OPERATION_TYPE.RESOLVING, function(err, availableChannels) {
-                    if (err) {
+                    if (err || !availableChannels) {
                         errors.add('findAvailableChannelsForResolving - Error', err);
                         return;
                     }
 
-                    if (availableChannels && availableChannels.length) {
-                        assignContactsToChannelsForOperation(availableChannels, contactIDs, config.OPERATION_TYPE.RESOLVING);
-                    } else {
-                        channels.assignNewChannelForOperation(config.OPERATION_TYPE.RESOLVING, function(err, channel) {
-                            if (err) {
-                                errors.add('assignNewChannelForResolving - Error', err);
+                    var availableChannelsCapacity = 0;
+
+                    availableChannels.forEach(function(channel) {
+                        availableChannelsCapacity += config.OPERATION_MAX_LIMIT[config.OPERATION_TYPE.RESOLVING] - channel.used_contacts_amount;
+                    });
+
+                    // If the current channels capacity is not enough, we surely know that we need to allocate more channels for this operation
+                    if (availableChannelsCapacity < contactIDs.length) {
+                        channels.allocateNewChannelsForOperation(config.OPERATION_TYPE.RESOLVING, contactIDs.length, function(err, newChannels) {
+                            if (err || !newChannels) {
+                                errors.add('assignNewChannelsForResolving - Error', err);
                                 return;
                             }
 
-                            if (channel) {
-                                assignContactsToChannelsForOperation(channel, contactIDs, config.OPERATION_TYPE.RESOLVING);
-                            }
+                            assignContactsToChannelsForOperation(availableChannels.concat(newChannels), contactIDs, config.OPERATION_TYPE.RESOLVING);
                         });
+                    } else {
+                        assignContactsToChannelsForOperation(availableChannels, contactIDs, config.OPERATION_TYPE.RESOLVING);
                     }
                 });
             }
@@ -82,7 +87,7 @@ function QueueManager() {
         //                 if (availableChannels && availableChannels.length) {
         //                     assignContactsToChannelsForOperation(availableChannels, contactIDs, config.OPERATION_TYPE.TRACKING);
         //                 } else {
-        //                     channels.assignNewChannelForOperation(config.OPERATION_TYPE.TRACKING, function(err, channel) {
+        //                     channels.allocateNewChannelsForOperation(config.OPERATION_TYPE.TRACKING, function(err, channel) {
         //                         if (err) {
         //                             errors.add('assignNewChannelForResolving - Error', err);
         //                             return;
@@ -126,7 +131,7 @@ function QueueManager() {
                     callback();
                 }
 
-                // setTimeout(function() { conn.close(); }, 5000);
+                setTimeout(function() { conn.close(); }, 5000);
             });
         });
     }
@@ -144,7 +149,7 @@ function QueueManager() {
 
         channels = _.sortBy(channels, 'used_contacts_amount');
 
-        promiseWhile(function() {
+        return promiseWhile(function() {
             // Condition for stopping
             return !errors.has() && contactIDs.length && channelsIndex < channels.length;
         }, function() {
@@ -153,7 +158,8 @@ function QueueManager() {
                 channelID = channels[channelsIndex].channel_id;
                 currentChannelContactsAmount = channels[channelsIndex].used_contacts_amount;
                 gap = config.OPERATION_MAX_LIMIT[operationType] - currentChannelContactsAmount;
-                assignedContacts = contactIDs.slice(0, gap);
+                assignedContacts = conta
+                ctIDs.slice(0, gap);
                 contactIDs = contactIDs.splice(gap);
                 channelsIndex++;
 
@@ -172,10 +178,6 @@ function QueueManager() {
         }).then(function() {
             // Notice we can chain it because it's a Promise, 
             // this will run after completion of the promiseWhile Promise!
-            if (contactIDs.length) {
-                errors.add('assignContactsToChannelsForOperation - after run', 'contacts left without being assigned to a channel');
-            }
-
             if (errors.has()) {
                 errors.dump();
             }
