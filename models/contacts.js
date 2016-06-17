@@ -111,10 +111,11 @@ function Contacts() {
             create(data);
         };
 
-        if (typeof data.id != "undefined") {
-            self.getOne(data.id, res, ecb);
+        if (typeof data.contact_id != "undefined") {
+            self.getOne(data.contact_id, res, ecb);
             return;
         }
+        
         if (typeof data.phoneNumber != "undefined") {
             self.findByPhone(data.phoneNumber, res, ecb);
             return;
