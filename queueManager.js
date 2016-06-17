@@ -158,14 +158,14 @@ function QueueManager() {
                 channelID = channels[channelsIndex].channel_id;
                 currentChannelContactsAmount = channels[channelsIndex].used_contacts_amount;
                 gap = config.OPERATION_MAX_LIMIT[operationType] - currentChannelContactsAmount;
-                assignedContacts = conta
-                ctIDs.slice(0, gap);
+                assignedContacts = contactIDs.slice(0, gap);
                 contactIDs = contactIDs.splice(gap);
                 channelsIndex++;
 
                 operationalContacts.assignContactsToChannel(channelID, assignedContacts, function(err) {
                     if (err) {
                         errors.add('assignContactsToChannelsForOperation - during run', err);
+                        reject();
                         return;
                     }
 
