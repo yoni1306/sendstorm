@@ -126,15 +126,15 @@ function Channels() {
                     return;
                 }
 
-                var channelIDs = newChannels.map(function(id) {
-                    return parseInt(id);
+                var channelIDs = newChannels.map(function(channel) {
+                    return parseInt(channel.channel_id);
                 }).join(",");
 
                 con.query('UPDATE channels set operation_type = ? WHERE channel_id IN (' + channelIDs + ')', [operationType]);
 
                 con.release();
 
-                newChannels.map(function(channel){
+                newChannels.forEach(function(channel){
                     channel.operation_type = operationType;
                 });
 
