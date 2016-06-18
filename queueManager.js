@@ -70,43 +70,50 @@ function QueueManager() {
             return;
         }
 
-        // if (!isBackgroundTask) {
-        //     operationalContacts.findContactsForOperation(config.OPERATION_TYPE.TRACKING, function(err, contactIDs) {
-        //         if (err) {
-        //             errors.add('findContactsForResolving - Error', err);
-        //             return;
-        //         }
+        if (!isBackgroundTask) {
+            operationalContacts.findContactsForOperation(config.OPERATION_TYPE.TRACKING, function(err, contactIDs) {
+                if (err) {
+                    errors.add('findContactsForResolving - Error', err);
+                    return;
+                }
 
-        //         if (contactIDs && contactIDs.length) {
-        //             channels.findAvailableChannelsForOperation(config.OPERATION_TYPE.TRACKING, function(err, availableChannels) {
-        //                 if (err) {
-        //                     errors.add('findAvailableChannelsForResolving - Error', err);
-        //                     return;
-        //                 }
+                if (contactIDs && contactIDs.length) {
+                    contactIDs = _.pluck(contactIDs, 'contact_id');
 
-        //                 if (availableChannels && availableChannels.length) {
-        //                     assignContactsToChannelsForOperation(availableChannels, contactIDs, config.OPERATION_TYPE.TRACKING);
-        //                 } else {
-        //                     channels.allocateNewChannelsForOperation(config.OPERATION_TYPE.TRACKING, function(err, channel) {
-        //                         if (err) {
-        //                             errors.add('assignNewChannelForResolving - Error', err);
-        //                             return;
-        //                         }
+                    channels.findAvailableChannelsForOperation(config.OPERATION_TYPE.TRACKING, function(err, availableChannels) {
+                        if (err || !availableChannels) {
+                            errors.add('findAvailableChannelsForTracking - Error', err);
+                            return;
+                        }
 
-        //                         if (channel) {
-        //                             assignContactsToChannelsForOperation(channel, contactIDs, config.OPERATION_TYPE.TRACKING);
-        //                         }
-        //                     });
-        //                 }
-        //             });
-        //         }
-        //     });
+                        var availableChannelsCapacity = 0;
 
-        //     if (errors.has) {
-        //         errors.dump();
-        //         return;
-        //     }
-        // }
+                        availableChannels.forEach(function(channel) {
+                            availableChannelsCapacity += config.OPERATION_MAX_LIMIT[config.OPERATION_TYPE.TRACKING] - channel.used_contacts_amount;
+                        });
+
+                        // If the current channels capacity is not enough, we surely know that we need to allocate more channels for this operation
+                        if (availableChannelsCapacity < contactIDs.length) {
+                            channels.allocateNewChannelsForOperation(config.OPERATION_TYPE.TRACKING, contactIDs.length, function(err, newChannels) {
+                                if (err || !newChannels) {
+                                    errors.add('assignNewChannelsForResolving - Error', err);
+                                    return;
+                                }
+
+                                assignContactsToChannelsForOperation(availableChannels.concat(newChannels), contactIDs, config.OPERATION_TYPE.TRACKING);
+                            });
+                        } else {
+                            assignContactsToChannelsForOperation(availableChannels, contactIDs, config.OPERATION_TYPE.TRACKING);
+                        }
+                    });
+                }
+            });
+
+            if (errors.has) {
+                errors.dump();
+                return;
+            }
+        }
     };
 
     function queueTask(channelID, contactIDs, operationType, callback) {
