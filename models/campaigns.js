@@ -82,6 +82,7 @@ function Campaigns() {
             data.contactIDs.forEach(function(id) {
                 data.contacts.push({ "contact_id": id });
             });
+        
         delete data.contactIDs;
 
         if (errors.has()) {
