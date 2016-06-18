@@ -65,7 +65,7 @@ function QueueManager() {
             }
         });
 
-        if (errors.has) {
+        if (errors.has()) {
             errors.dump();
             return;
         }
